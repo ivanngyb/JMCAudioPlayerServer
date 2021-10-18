@@ -29,24 +29,18 @@ namespace JMCAudioPlayerServer
         /// </summary>
         private void InitializeComponent()
         {
-            this.ListBoxUsers = new System.Windows.Forms.ListBox();
             this.RichTextBoxConsole = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.TextBoxPipeName = new System.Windows.Forms.TextBox();
             this.ButtonStart = new System.Windows.Forms.Button();
+            this.ListBoxUsers = new System.Windows.Forms.ListBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // ListBoxUsers
-            // 
-            this.ListBoxUsers.FormattingEnabled = true;
-            this.ListBoxUsers.Location = new System.Drawing.Point(8, 32);
-            this.ListBoxUsers.Name = "ListBoxUsers";
-            this.ListBoxUsers.Size = new System.Drawing.Size(464, 173);
-            this.ListBoxUsers.TabIndex = 0;
             // 
             // RichTextBoxConsole
             // 
-            this.RichTextBoxConsole.Location = new System.Drawing.Point(8, 216);
+            this.RichTextBoxConsole.Location = new System.Drawing.Point(11, 269);
             this.RichTextBoxConsole.Name = "RichTextBoxConsole";
             this.RichTextBoxConsole.ReadOnly = true;
             this.RichTextBoxConsole.Size = new System.Drawing.Size(464, 192);
@@ -80,16 +74,46 @@ namespace JMCAudioPlayerServer
             this.ButtonStart.UseVisualStyleBackColor = true;
             this.ButtonStart.Click += new System.EventHandler(this.ButtonStart_Click);
             // 
+            // ListBoxUsers
+            // 
+            this.ListBoxUsers.FormattingEnabled = true;
+            this.ListBoxUsers.HorizontalScrollbar = true;
+            this.ListBoxUsers.Location = new System.Drawing.Point(11, 59);
+            this.ListBoxUsers.Name = "ListBoxUsers";
+            this.ListBoxUsers.ScrollAlwaysVisible = true;
+            this.ListBoxUsers.Size = new System.Drawing.Size(464, 173);
+            this.ListBoxUsers.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(11, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "List of users";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(11, 250);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(80, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Console Output";
+            // 
             // PipeServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(485, 417);
+            this.ClientSize = new System.Drawing.Size(494, 473);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.ListBoxUsers);
             this.Controls.Add(this.ButtonStart);
             this.Controls.Add(this.TextBoxPipeName);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.RichTextBoxConsole);
-            this.Controls.Add(this.ListBoxUsers);
             this.Name = "PipeServerForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -98,12 +122,13 @@ namespace JMCAudioPlayerServer
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox ListBoxUsers;
         private System.Windows.Forms.RichTextBox RichTextBoxConsole;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox TextBoxPipeName;
         private System.Windows.Forms.Button ButtonStart;
+        private System.Windows.Forms.ListBox ListBoxUsers;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }
 

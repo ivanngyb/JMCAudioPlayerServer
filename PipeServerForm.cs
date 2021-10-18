@@ -22,7 +22,13 @@ namespace JMCAudioPlayerServer
             pipeServer.MessageReceived += PipeServer_MessageReceived;
             pipeServer.ClientDisconnected += PipeServer_ClientDisconnected;
             pipeServer.ClientConnected += PipeServer_ClientConnected;
+            pipeServer.UserRegister += PipeServer_UserRegister;
             TextBoxPipeName.Text = "jmcaudio";
+        }
+
+        void PipeServer_UserRegister()
+        {
+            Invoke(new PipeServer.NewUserRegisterHandler(UserRegister));
         }
 
         void PipeServer_ClientDisconnected()
@@ -43,6 +49,11 @@ namespace JMCAudioPlayerServer
         void ClientConnected()
         {
             RichTextBoxConsole.Text += "\r\nClient connected!";
+        }
+
+        void UserRegister()
+        {
+            ListBoxUsers.Items.Add(PipeServer.userInfos[PipeServer.userInfos.Count - 1].username + " " + PipeServer.userInfos[PipeServer.userInfos.Count - 1].password);
         }
 
         void PipeServer_MessageReceived(byte[] message)

@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace JMCAudioPlayerServer
 {
@@ -65,8 +66,7 @@ namespace JMCAudioPlayerServer
         {
             public SafeFileHandle handle;
             public FileStream stream;
-            public string username;
-            public string password;
+            public UserInfo userInfo;
             public bool connected = false;
         }
 
@@ -74,6 +74,7 @@ namespace JMCAudioPlayerServer
         {
             public string username;
             public string password;
+            public bool loggedIn = false;
         }
 
         //Events for message handling and client connecting/disconnecting
@@ -81,6 +82,8 @@ namespace JMCAudioPlayerServer
         public event MessageReceivedHandler MessageReceived;
         public delegate void ClientDisconnectedHandler();
         public event ClientDisconnectedHandler ClientDisconnected;
+        public delegate void NewUserRegisterHandler();
+        public event NewUserRegisterHandler UserRegister;
 
         public delegate void ClientConnectedHandler();
         public event ClientConnectedHandler ClientConnected;
@@ -88,7 +91,7 @@ namespace JMCAudioPlayerServer
 
         Thread listenThread;
         public readonly List<Client> clients = new List<Client>();
-        public List<UserInfo> userInfos = new List<UserInfo>();
+        public static List<UserInfo> userInfos = new List<UserInfo>();
 
         //Get total of clients connected
         public int TotalConnectedClients
@@ -104,8 +107,6 @@ namespace JMCAudioPlayerServer
 
         public string PipeName { get; private set; }
         public bool Running { get; private set; }
-        private string clientUsername;
-        private string clientPassword;
 
         //Generating SHA512 for password
         private string GenerateSHA512String(string inputString)
@@ -145,7 +146,6 @@ namespace JMCAudioPlayerServer
                 };
 
                 listenThread.Start();
-
                 Running = true;
             }
             catch (Exception e)
@@ -287,8 +287,11 @@ namespace JMCAudioPlayerServer
                         {
                             UserInfo newUser = new UserInfo();
                             newUser.username = data[1];
-                            newUser.password = GenerateSHA512String(data[2]);
+                            newUser.password = data[2];
                             userInfos.Add(newUser);
+
+                            if (UserRegister != null)
+                                UserRegister();
                         }
                         else if (data[0].Equals("LOGIN"))
                         {
@@ -307,6 +310,8 @@ namespace JMCAudioPlayerServer
                 DisconnectNamedPipe(client.handle);
                 client.stream.Close();
                 client.handle.Close();
+                if (client.userInfo != null)
+                    client.userInfo.loggedIn = false;
 
                 clients.Remove(client);
                 Console.WriteLine("Clients removed");
@@ -319,38 +324,56 @@ namespace JMCAudioPlayerServer
         //Validating user class
         public void ValidateUser(byte[] message, Client client)
         {
+            Console.WriteLine("Checking login info");
             ASCIIEncoding encoder = new ASCIIEncoding();
             string[] data = encoder.GetString(message, 0, message.Length).Split(' ');
             bool userFound = false;
             UserInfo userCheck = null;
 
+            
+
             foreach (UserInfo u in userInfos)
             {
-                if (u.username.Equals(data[0])) 
+                if (u.username.Equals(data[1])) 
                 {
                     userFound = true;
                     userCheck = u;
-                    return;
+                    break;
                 }
             }
 
             if (userFound && userCheck != null)
             {
-                if (CompareSHA512(GenerateSHA512String(data[1]), userCheck))
+                Console.WriteLine("Comparing Passwords");
+                if (CompareSHA512(data[2], userCheck))
                 {
-                    client.connected = true;
-                    byte[] messageBuffer = encoder.GetBytes("LOGIN_SUCCESS");
-                    this.SendMessageToClient(messageBuffer, client);
+                    if (!userCheck.loggedIn)
+                    {
+                        Console.WriteLine("Sucess");
+                        userCheck.loggedIn = true;
+                        client.userInfo = userCheck;
+                        byte[] messageBuffer = encoder.GetBytes("LOGIN_SUCCESS");
+                        this.SendMessageToClient(messageBuffer, client);
+                    }
+                    else
+                    {
+                        userCheck.loggedIn = true;
+                        byte[] messageBuffer = encoder.GetBytes("LOGIN_FAILED2");
+                        this.SendMessageToClient(messageBuffer, client);
+                    }
+
                 }
                 else
                 {
-                    byte[] messageBuffer = encoder.GetBytes("LOGIN_FAILED");
+                    Console.WriteLine("Fail Incorrect Password");
+                    byte[] messageBuffer = encoder.GetBytes("LOGIN_FAILED1");
                     this.SendMessageToClient(messageBuffer, client);
                 }
             }
             else
             {
-                byte[] messageBuffer = encoder.GetBytes("LOGIN_FAILED");
+                Console.WriteLine("Fail user not found");
+                byte[] messageBuffer = encoder.GetBytes("LOGIN_FAILED1");
                 this.SendMessageToClient(messageBuffer, client);
             }
         }
