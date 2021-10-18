@@ -66,6 +66,7 @@ namespace JMCAudioPlayerServer
             // 
             this.TextBoxPipeName.Location = new System.Drawing.Point(104, 8);
             this.TextBoxPipeName.Name = "TextBoxPipeName";
+            this.TextBoxPipeName.ReadOnly = true;
             this.TextBoxPipeName.Size = new System.Drawing.Size(122, 20);
             this.TextBoxPipeName.TabIndex = 3;
             // 
@@ -77,8 +78,9 @@ namespace JMCAudioPlayerServer
             this.ButtonStart.TabIndex = 4;
             this.ButtonStart.Text = "Start Server";
             this.ButtonStart.UseVisualStyleBackColor = true;
+            this.ButtonStart.Click += new System.EventHandler(this.ButtonStart_Click);
             // 
-            // Form1
+            // PipeServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -88,7 +90,7 @@ namespace JMCAudioPlayerServer
             this.Controls.Add(this.label1);
             this.Controls.Add(this.RichTextBoxConsole);
             this.Controls.Add(this.ListBoxUsers);
-            this.Name = "Form1";
+            this.Name = "PipeServerForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
