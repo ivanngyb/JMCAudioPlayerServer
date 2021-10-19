@@ -72,8 +72,10 @@ namespace JMCAudioPlayerServer
 
         public class UserInfo
         {
-            public string username;
-            public string password;
+            private string username;
+            private string password;
+            public string Username { get => username; set => username = value; }
+            public string Password { get => password; set => password = value; }
             public bool loggedIn = false;
         }
 
@@ -91,7 +93,7 @@ namespace JMCAudioPlayerServer
 
         Thread listenThread;
         public readonly List<Client> clients = new List<Client>();
-        public static List<UserInfo> userInfos = new List<UserInfo>();
+        public List<UserInfo> userInfos = new List<UserInfo>();
 
         //Get total of clients connected
         public int TotalConnectedClients
@@ -127,7 +129,7 @@ namespace JMCAudioPlayerServer
         private bool CompareSHA512(string attemptPass, UserInfo userCheck)
         {
 
-            if (GenerateSHA512String(attemptPass).Equals(GenerateSHA512String(userCheck.password)))
+            if (GenerateSHA512String(attemptPass).Equals(GenerateSHA512String(userCheck.Password)))
             {
                 return true;
             }
@@ -286,8 +288,8 @@ namespace JMCAudioPlayerServer
                         if (data[0].Equals("REGISTER"))
                         {
                             UserInfo newUser = new UserInfo();
-                            newUser.username = data[1];
-                            newUser.password = data[2];
+                            newUser.Username = data[1];
+                            newUser.Password = data[2];
                             userInfos.Add(newUser);
 
                             if (UserRegister != null)
@@ -334,7 +336,7 @@ namespace JMCAudioPlayerServer
 
             foreach (UserInfo u in userInfos)
             {
-                if (u.username.Equals(data[1])) 
+                if (u.Username.Equals(data[1])) 
                 {
                     userFound = true;
                     userCheck = u;

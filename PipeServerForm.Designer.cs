@@ -116,6 +116,7 @@ namespace JMCAudioPlayerServer
             this.Controls.Add(this.RichTextBoxConsole);
             this.Name = "PipeServerForm";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PipeServerForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

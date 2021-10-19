@@ -1,8 +1,11 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,7 +56,7 @@ namespace JMCAudioPlayerServer
 
         void UserRegister()
         {
-            ListBoxUsers.Items.Add(PipeServer.userInfos[PipeServer.userInfos.Count - 1].username + " " + PipeServer.userInfos[PipeServer.userInfos.Count - 1].password);
+            ListBoxUsers.Items.Add(pipeServer.userInfos[pipeServer.userInfos.Count - 1].Username + " " + pipeServer.userInfos[pipeServer.userInfos.Count - 1].Password);
         }
 
         void PipeServer_MessageReceived(byte[] message)
@@ -72,6 +75,25 @@ namespace JMCAudioPlayerServer
 
         private void ButtonStart_Click(object sender, EventArgs e)
         {
+            if (File.Exists("users.csv"))
+            {
+                Console.WriteLine("File found");
+                List<PipeServer.UserInfo> records;
+                using (var reader = new StreamReader("users.csv"))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    records = csv.GetRecords<PipeServer.UserInfo>().ToList();
+                }
+                for (int i = 0; i < records.Count(); i++)
+                {
+                    PipeServer.UserInfo newUser = new PipeServer.UserInfo();
+                    newUser.Username = records[i].Username;
+                    newUser.Password = records[i].Password;
+                    pipeServer.userInfos.Add(newUser);
+                    ListBoxUsers.Items.Add(newUser.Username + " " + newUser.Password);
+                }
+                
+            }
             if (!pipeServer.Running)
             {
                 pipeServer.Start("\\\\.\\pipe\\" + TextBoxPipeName.Text);
@@ -80,6 +102,15 @@ namespace JMCAudioPlayerServer
             }
             else
                 MessageBox.Show("Server already running.");
+        }
+
+        private void PipeServerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            using (var writer = new StreamWriter("users.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(pipeServer.userInfos);
+            }
         }
     }
 }
