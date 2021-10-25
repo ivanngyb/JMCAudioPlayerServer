@@ -78,6 +78,7 @@ namespace JMCAudioPlayerServer
             RichTextBoxConsole.Text += "\r\n" + str;
         }
 
+        //Starts server and checks ot see if a user file is found. If found loads users
         private void ButtonStart_Click(object sender, EventArgs e)
         {
             if (File.Exists("users.csv"))
@@ -109,6 +110,7 @@ namespace JMCAudioPlayerServer
                 MessageBox.Show("Server already running.");
         }
 
+        //When form closes writes records into a CSV for all users info
         private void PipeServerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             using (var writer = new StreamWriter("users.csv"))
