@@ -10,6 +10,11 @@ using Microsoft.Win32.SafeHandles;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
+//Student ID: 30031552
+//Student Name: Yang Beng Ng(Ivan)
+//Date: 25/10/2021
+//Description: An advance audio player with login capabilities and song saving
+
 namespace JMCAudioPlayerServer
 {
     class PipeServer
@@ -285,20 +290,65 @@ namespace JMCAudioPlayerServer
                     {
                         string[] data = encoder.GetString(ms.ToArray(), 0, ms.ToArray().Length).Split(' ');
 
+
                         if (data[0].Equals("REGISTER"))
                         {
-                            UserInfo newUser = new UserInfo();
-                            newUser.Username = data[1];
-                            newUser.Password = data[2];
-                            userInfos.Add(newUser);
+                            bool existing = false;
 
-                            if (UserRegister != null)
-                                UserRegister();
+                            foreach (UserInfo u in userInfos)
+                            {
+                                if (u.Username.Equals(data[1]))
+                                {
+                                    existing = true;
+                                    break;
+                                }
+                            }
+
+                            if (existing == false)
+                            {
+                                UserInfo newUser = new UserInfo();
+                                newUser.Username = data[1];
+                                newUser.Password = data[2];
+                                userInfos.Add(newUser);
+
+                                byte[] messageBuffer = encoder.GetBytes("REGISTER_SUCCESS");
+                                this.SendMessageToClient(messageBuffer, client);
+
+                                if (UserRegister != null)
+                                    UserRegister();
+                            }
+                            else
+                            {
+                                byte[] messageBuffer = encoder.GetBytes("REGISTER_FAILED1");
+                                this.SendMessageToClient(messageBuffer, client);
+                            }
                         }
                         else if (data[0].Equals("LOGIN"))
                         {
                             //Validates their username and password
                             ValidateUser(ms.ToArray(), client);
+                        }
+                        else if (data[0].Equals("RECONNECT"))
+                        {
+                            foreach (UserInfo userInfo in userInfos)
+                            {
+                                if (userInfo.Username.Equals(data[1]))
+                                {
+                                    userInfo.loggedIn = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (data[0].Equals("DISCONNECT"))
+                        {
+                            foreach (UserInfo userInfo in userInfos)
+                            {
+                                if (userInfo.Username.Equals(data[1]))
+                                {
+                                    userInfo.loggedIn = false;
+                                    break;
+                                }
+                            }
                         }
                     }
 

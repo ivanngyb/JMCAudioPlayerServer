@@ -114,8 +114,9 @@ namespace JMCAudioPlayerServer
             this.Controls.Add(this.TextBoxPipeName);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.RichTextBoxConsole);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "PipeServerForm";
-            this.Text = "Form1";
+            this.Text = "JMC Audio Server";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PipeServerForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
